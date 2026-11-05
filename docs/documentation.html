@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopSmart Project Documentation</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background-color: #ffffff;
+    line-height: 1.55;
+    font-size: 13.5px;
+    margin: 0;
+    padding: 0;
+  }
+  .cover {
+    page-break-after: always;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 20px;
+    border-bottom: 3px solid #2563eb;
+  }
+  .cover-tag {
+    display: inline-block;
+    background-color: #eff6ff;
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    width: fit-content;
+    border: 1px solid #bfdbfe;
+  }
+  .cover h1 {
+    font-size: 38px;
+    line-height: 1.15;
+    color: #0f172a;
+    margin: 0 0 16px 0;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .cover .subtitle {
+    font-size: 18px;
+    color: #475569;
+    margin: 0 0 35px 0;
+    font-weight: 400;
+    max-width: 650px;
+  }
+  .cover-meta {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 30px;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .meta-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .meta-value {
+    font-size: 14px;
+    color: #0f172a;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  h2 {
+    font-size: 21px;
+    color: #0f172a;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+    margin-top: 36px;
+    margin-bottom: 16px;
+    page-break-after: avoid;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 16px;
+    color: #1e3a8a;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+    font-weight: 600;
+  }
+  p, li {
+    color: #334155;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  ul, ol {
+    padding-left: 22px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+  li {
+    margin-bottom: 6px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 20px 0;
+    font-size: 12.5px;
+    page-break-inside: avoid;
+  }
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #cbd5e1;
+  }
+  th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 600;
+  }
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+  }
+  pre {
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 11.5px;
+    line-height: 1.45;
+    margin: 12px 0 18px 0;
+    page-break-inside: avoid;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border: none;
+  }
+  .card {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+  .card-title {
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 6px;
+    font-size: 13.5px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-get { background-color: #dcfce7; color: #15803d; }
+  .badge-post { background-color: #dbeafe; color: #1d4ed8; }
+  .badge-info { background-color: #e0e7ff; color: #4338ca; }
+  .section-page {
+    page-break-before: always;
+  }
+  .footer-note {
+    font-size: 11px;
+    color: #94a3b8;
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-tag">Project Documentation</div>
+  <h1>ShopSmart E-Commerce Application</h1>
+  <div class="subtitle">Complete technical specification, architecture overview, API guide, and deployment manual for the standalone full-stack shopping platform.</div>
+  
+  <div class="cover-meta">
+    <div class="meta-item">
+      <span class="meta-label">Application Type</span>
+      <span class="meta-value">Full-Stack Web App (React + Express)</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Architecture</span>
+      <span class="meta-value">Standalone / Database-Free (Zero XAMPP)</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Course / Laboratory</span>
+      <span class="meta-value">PDC50 - Full-Stack Web Development</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Release Version</span>
+      <span class="meta-value">v1.0.0 Stable</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 1: INTRODUCTION -->
+<h2>1. Executive Summary & Project Purpose</h2>
+<p>
+  <strong>ShopSmart</strong> is an educational full-stack e-commerce web application engineered for modern web development practice. It demonstrates end-to-end integration between a responsive, single-page React frontend and an Express REST API backend.
+</p>
+<p>
+  The platform provides real-time catalog browsing, instant product search, category filtering, persistent client cart state management, checkout simulation with atomic inventory deduction, and an intelligent rule-based shopping assistant capable of parsing natural language price constraints.
+</p>
+
+<div class="card">
+  <div class="card-title">💡 Standalone Operation (No XAMPP or Database Server Required)</div>
+  <p style="margin: 0;">
+    The application has been engineered to run completely standalone. It stores data in a file-backed local JSON repository (<code>backend/src/data/db.json</code>). You <strong>do not need XAMPP, Apache, MySQL, or PostgreSQL</strong> running on your machine.
+  </p>
+</div>
+
+<h3>Key System Objectives</h3>
+<ul>
+  <li><strong>Zero External Server Dependencies:</strong> Operates 100% locally with Node.js and npm without requiring background database services.</li>
+  <li><strong>Full Catalog Management:</strong> Real-time product search, categorization, and item inventory tracking.</li>
+  <li><strong>Transactional Stock Reservation:</strong> Decrements stock upon checkout and protects against overselling.</li>
+  <li><strong>AI Shopping Assistant:</strong> Rule-based heuristic processor that extracts budget amounts (e.g., ₱2,000) and matches top catalog items.</li>
+  <li><strong>Comprehensive Test Coverage:</strong> Full automated testing across unit and integration levels with Vitest and Node Test Runner.</li>
+</ul>
+
+<!-- SECTION 2: SYSTEM ARCHITECTURE -->
+<h2>2. System Architecture & Technology Stack</h2>
+<p>
+  ShopSmart adopts a decoupled client-server architecture. The frontend and backend run as independent Node.js processes managed concurrently via npm workspaces.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+      <th>Key Libraries / Tools</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Frontend</strong></td>
+      <td>React 19, Vite 7</td>
+      <td>React Router v7, React Context API</td>
+      <td>Single-page application with responsive layouts, route handling, and dynamic cart state.</td>
+    </tr>
+    <tr>
+      <td><strong>Backend API</strong></td>
+      <td>Node.js 22 LTS, Express 5</td>
+      <td>Helmet, Morgan, CORS, Express-Rate-Limit</td>
+      <td>RESTful API serving JSON payloads with security headers, request tracing, and logging.</td>
+    </tr>
+    <tr>
+      <td><strong>Validation</strong></td>
+      <td>Zod 4</td>
+      <td>Schema parsing & sanitization</td>
+      <td>Validates customer checkout payloads and assistant question constraints.</td>
+    </tr>
+    <tr>
+      <td><strong>Data Storage</strong></td>
+      <td>File-Backed JSON Store</td>
+      <td>Node.js File System (<code>fs</code>)</td>
+      <td>Self-contained, atomic file persistence at <code>backend/src/data/db.json</code>. Zero database server required.</td>
+    </tr>
+    <tr>
+      <td><strong>Quality & Testing</strong></td>
+      <td>Vitest & Node Test Runner</td>
+      <td>ESLint 9</td>
+      <td>Automated unit tests for cart algorithms, assistant rules, and schema validators.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-page"></div>
+
+<!-- SECTION 3: DIRECTORY STRUCTURE -->
+<h2>3. Project Directory & File Structure</h2>
+<p>
+  The project is organized as an npm multi-workspace repository:
+</p>
+
+<pre><code>ShopSmart/
+├── backend/
+│   ├── prisma/
+│   │   └── seed.js             # Standalone catalog reset / seed script
+│   ├── src/
+│   │   ├── data/
+│   │   │   └── db.json         # Local persistent data store (products & orders)
+│   │   ├── lib/
+│   │   │   └── prisma.js       # Database-free storage repository interface
+│   │   ├── routes/
+│   │   │   ├── assistant.js    # AI Assistant API route
+│   │   │   ├── orders.js       # Checkout & order processing route
+│   │   │   └── products.js     # Catalog retrieval & search route
+│   │   ├── services/
+│   │   │   └── assistant.js    # Budget parsing & heuristic recommendation logic
+│   │   ├── validators/
+│   │   │   └── schemas.js      # Zod input validation schemas
+│   │   ├── app.js              # Express app configuration & middleware
+│   │   └── server.js           # Server bootstrap & graceful shutdown
+│   ├── test/                   # Backend automated unit tests
+│   ├── .env                    # Environment variables (port, origin)
+│   └── package.json            # Backend dependencies & scripts
+├── frontend/
+│   ├── src/
+│   │   ├── components/         # Reusable UI components (ProductCard, StatusMessage)
+│   │   ├── context/            # CartContext state provider
+│   │   ├── pages/              # View pages (Products, Details, Cart, Checkout, Assistant)
+│   │   ├── services/api.js     # Fetch API wrapper
+│   │   ├── utils/              # Cart calculation logic & unit tests
+│   │   ├── App.jsx             # Route definitions & global layout
+│   │   └── main.jsx            # React root mount
+│   ├── .env                    # Frontend environment configuration
+│   └── package.json            # Frontend dependencies & scripts
+├── docs/                       # Project documentation & reference files
+├── package.json                # Root workspace configuration
+└── README.md                   # Quickstart guide</code></pre>
+
+<!-- SECTION 4: GETTING STARTED -->
+<h2>4. Installation & Setup Guide</h2>
+<p>
+  Running ShopSmart does not require any database setup or third-party servers. All you need is Node.js installed.
+</p>
+
+<h3>Step 1: Install Dependencies</h3>
+<p>Open PowerShell or Terminal at the project root directory (<code>ShopSmart</code>) and execute:</p>
+<pre><code>npm install</code></pre>
+
+<h3>Step 2: Start the Application</h3>
+<p>Launch both the frontend client and the backend API concurrently using:</p>
+<pre><code>npm run dev</code></pre>
+
+<p>The console will display outputs from both workspaces:</p>
+<ul>
+  <li><strong>Frontend Web Application:</strong> <code>http://localhost:5173</code></li>
+  <li><strong>Backend REST API:</strong> <code>http://localhost:3000</code></li>
+</ul>
+
+<h3>Step 3: Reset or Seed Sample Data (Optional)</h3>
+<p>If you want to reset the catalog back to the original 6 products with full inventory, run:</p>
+<pre><code>npm run db:seed</code></pre>
+
+<h3>Step 4: Run Automated Verification</h3>
+<p>To run ESLint, frontend tests, backend tests, and build check all in one command:</p>
+<pre><code>npm run check</code></pre>
+
+<div class="section-page"></div>
+
+<!-- SECTION 5: API DOCUMENTATION -->
+<h2>5. REST API Reference</h2>
+<p>
+  All backend endpoints are prefixed with <code>/api</code>. Responses are returned in standard JSON format.
+</p>
+
+<h3>1. Health Check</h3>
+<p><span class="badge badge-get">GET</span> <code>/api/health</code></p>
+<p>Returns the operational status of the API server.</p>
+<pre><code>// Response 200 OK
+{
+  "status": "ok"
+}</code></pre>
+
+<h3>2. Get All Products</h3>
+<p><span class="badge badge-get">GET</span> <code>/api/products</code></p>
+<p>Retrieves all active catalog products. Supports an optional query parameter <code>?search=&lt;keyword&gt;</code> to filter items by name.</p>
+<pre><code>// Response 200 OK
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Wireless Mouse",
+      "description": "Quiet wireless mouse with adjustable sensitivity and USB receiver.",
+      "category": "Accessories",
+      "emoji": "🖱️",
+      "price": 650,
+      "stock": 12,
+      "active": true
+    },
+    ...
+  ]
+}</code></pre>
+
+<h3>3. Get Product By ID</h3>
+<p><span class="badge badge-get">GET</span> <code>/api/products/:id</code></p>
+<p>Retrieves a single product by its numerical ID.</p>
+<ul>
+  <li><strong>200 OK:</strong> Returns the product object.</li>
+  <li><strong>400 Bad Request:</strong> If <code>:id</code> is not a positive integer.</li>
+  <li><strong>404 Not Found:</strong> If the product does not exist or is inactive.</li>
+</ul>
+
+<h3>4. Create Simulated Order (Checkout)</h3>
+<p><span class="badge badge-post">POST</span> <code>/api/orders</code></p>
+<p>Validates cart items, verifies stock availability, deducts inventory, and records a new order.</p>
+<pre><code>// Request Body
+{
+  "customerName": "Josh Manalang",
+  "email": "josh@example.com",
+  "address": "123 Academic Way, Angeles City",
+  "items": [
+    { "productId": 1, "quantity": 1 },
+    { "productId": 2, "quantity": 1 }
+  ]
+}
+
+// Response 201 Created
+{
+  "id": 2,
+  "customerName": "Josh Manalang",
+  "email": "josh@example.com",
+  "address": "123 Academic Way, Angeles City",
+  "status": "PENDING",
+  "total": 2500,
+  "createdAt": "2026-09-28T07:15:30.123Z",
+  "items": [
+    { "id": 4, "orderId": 2, "productId": 1, "quantity": 1, "unitPrice": 650 },
+    { "id": 5, "orderId": 2, "productId": 2, "quantity": 1, "unitPrice": 1850 }
+  ]
+}</code></pre>
+
+<h3>5. ShopSmart AI Assistant Query</h3>
+<p><span class="badge badge-post">POST</span> <code>/api/assistant/questions</code></p>
+<p>Processes a user query, parses budget constraints, ranks catalog items, and outputs recommendations with traceable product sources.</p>
+<pre><code>// Request Body
+{
+  "question": "Which keyboard is below ₱2,000?"
+}
+
+// Response 200 OK
+{
+  "answer": "Based on the current ShopSmart catalog, consider: Compact Mechanical Keyboard. This starter response uses rules rather than a generative AI model.",
+  "recommendedProducts": [
+    { "id": 2, "name": "Compact Mechanical Keyboard", "price": 1850, "category": "Accessories" }
+  ],
+  "sources": [
+    { "type": "product", "id": 2, "name": "Compact Mechanical Keyboard" }
+  ]
+}</code></pre>
+
+<div class="section-page"></div>
+
+<!-- SECTION 6: DATA MODELS -->
+<h2>6. Data Models & Schemas</h2>
+
+<h3>Product Model</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td>Integer</td><td>Unique auto-incremented product identifier.</td></tr>
+    <tr><td><code>name</code></td><td>String</td><td>Product title (e.g., "Wireless Mouse").</td></tr>
+    <tr><td><code>description</code></td><td>String</td><td>Full textual description of product features.</td></tr>
+    <tr><td><code>category</code></td><td>String</td><td>Product classification (e.g., "Accessories", "Study", "Audio").</td></tr>
+    <tr><td><code>emoji</code></td><td>String</td><td>Visual emoji representation for UI cards.</td></tr>
+    <tr><td><code>price</code></td><td>Number</td><td>Retail price in Philippine Pesos (₱).</td></tr>
+    <tr><td><code>stock</code></td><td>Integer</td><td>Available inventory units. Decremented upon purchase.</td></tr>
+    <tr><td><code>active</code></td><td>Boolean</td><td>Visibility flag (default: <code>true</code>).</td></tr>
+  </tbody>
+</table>
+
+<h3>Order & OrderItem Models</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td rowspan="6"><strong>Order</strong></td><td><code>id</code></td><td>Integer</td><td>Unique order tracking number.</td></tr>
+    <tr><td><code>customerName</code></td><td>String</td><td>Customer's full name (2–80 characters).</td></tr>
+    <tr><td><code>email</code></td><td>String</td><td>Valid email address.</td></tr>
+    <tr><td><code>address</code></td><td>String</td><td>Delivery address (10–300 characters).</td></tr>
+    <tr><td><code>status</code></td><td>String</td><td>Order status (default: <code>"PENDING"</code>).</td></tr>
+    <tr><td><code>total</code></td><td>Number</td><td>Computed order grand total in Pesos.</td></tr>
+    <tr><td rowspan="4"><strong>OrderItem</strong></td><td><code>id</code></td><td>Integer</td><td>Unique line item ID.</td></tr>
+    <tr><td><code>orderId</code></td><td>Integer</td><td>Foreign reference to the parent Order.</td></tr>
+    <tr><td><code>productId</code></td><td>Integer</td><td>Reference to the purchased Product.</td></tr>
+    <tr><td><code>quantity</code></td><td>Integer</td><td>Number of units ordered.</td></tr>
+  </tbody>
+</table>
+
+<!-- SECTION 7: TESTING & TROUBLESHOOTING -->
+<h2>7. Quality Assurance & Troubleshooting</h2>
+
+<h3>Automated Test Suite</h3>
+<ul>
+  <li><strong>Frontend (<code>vitest run</code>):</strong> Tests shopping cart arithmetic, quantity increments, quantity decrements, and total calculation in <code>src/utils/cart.test.js</code>.</li>
+  <li><strong>Backend (<code>node --test</code>):</strong> Tests budget regex extraction, heuristic product ranking, traceability of AI recommendations, Zod order validation, and duplicate item rejection.</li>
+</ul>
+
+<h3>Common Troubleshooting Scenarios</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Issue</th>
+      <th>Probable Cause</th>
+      <th>Solution</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Port 3000 or 5173 already in use</strong></td>
+      <td>Another background terminal or application is holding the port.</td>
+      <td>Close other terminals or stop the process in Task Manager, then run <code>npm run dev</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Products not appearing</strong></td>
+      <td>The data store was emptied or the backend is stopped.</td>
+      <td>Run <code>npm run db:seed</code> to restore all 6 sample products and restart <code>npm run dev</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>No XAMPP or MySQL needed?</strong></td>
+      <td>User expected MySQL connection.</td>
+      <td>ShopSmart is completely standalone. Do not launch XAMPP or MySQL; the local JSON store handles all operations automatically.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="footer-note">
+  ShopSmart Documentation &bull; Generated for PDC50 Full-Stack Web Development Sequence &bull; All Rights Reserved
+</div>
+
+</body>
+</html>

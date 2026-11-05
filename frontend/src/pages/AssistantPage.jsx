@@ -21,7 +21,7 @@ export default function AssistantPage() {
       <div>
         <p className="eyebrow">STARTER ASSISTANT</p>
         <h1>Find a product</h1>
-        <p>This initial version uses simple server-side rules. Students will replace it with a grounded AI service in Week 5.</p>
+        <p>Ask about products, budgets, categories, or availability. Answers are grounded in the current catalog.</p>
         <form onSubmit={ask}>
           <label>Your question<textarea value={question} onChange={(event) => setQuestion(event.target.value)} minLength="3" maxLength="300" placeholder="Which keyboard is below ₱2,000?" required /></label>
           <button disabled={loading}>{loading ? 'Searching…' : 'Ask ShopSmart'}</button>
@@ -30,7 +30,8 @@ export default function AssistantPage() {
       <div className="assistant-answer">
         <h2>Assistant response</h2>
         <StatusMessage type="error">{error}</StatusMessage>
-        {!result && !error && <p>Your answer will appear here.</p>}
+        {loading && <p role="status">Checking the current catalog…</p>}
+        {!result && !error && !loading && <p>Your answer will appear here.</p>}
         {result && <>
           <p>{result.answer}</p>
           <div className="recommendations">
@@ -38,6 +39,7 @@ export default function AssistantPage() {
               <Link key={product.id} to={`/products/${product.id}`}>{product.name} — ₱{Number(product.price).toLocaleString('en-PH')}</Link>
             ))}
           </div>
+          {result.sources.length > 0 && <small>Sources: {result.sources.map((source) => source.name).join(', ')}</small>}
         </>}
       </div>
     </section>

@@ -323,3 +323,124 @@ Confirm that the front end uses http://localhost:5173 and that `FRONTEND_URL=htt
 | `npm run db:studio` | Open the Prisma database viewer |
 
 Read `docs/TEACHING_ROADMAP.md` for the weekly improvement plan.
+
+---
+
+## PDC50 Laboratory 3: Live Catalog Search Through the API
+
+### 1. Project Purpose
+Laboratory 3 enhances ShopSmart by transitioning product catalog searching from client-side array filtering to an authentic server-side REST API search architecture. Requests flow from React components to the Express backend, querying the catalog through Prisma with case-insensitive matching across product names and descriptions, while coordinating category filtering, price sorting, request cancellation, and error recovery on the client.
+
+### 2. Technologies Used
+- **Frontend:** React 19, Vite 7, React Router 7, Vitest
+- **Backend API:** Node.js 22 LTS, Express 5, Morgan, Helmet, CORS, express-rate-limit
+- **ORM & Data Layer:** Prisma ORM, MySQL/PostgreSQL schema configuration, standalone file-backed JSON store adapter (`backend/src/data/db.json`)
+- **Validation & Quality:** Zod 4, ESLint 9, Node.js native test runner
+
+### 3. Required Software
+- Node.js LTS 20.19.0 or newer (v22 recommended)
+- npm 10 or newer
+- Modern web browser (Chrome, Edge, Firefox)
+
+### 4. Installation Steps
+Clone or open the repository and install dependencies across the workspace:
+```powershell
+npm install
+```
+
+### 5. Environment Configuration
+Verify that `.env` files exist in both `backend` and `frontend` without exposing credentials:
+- `backend/.env`:
+  ```env
+  PORT=3000
+  FRONTEND_URL=http://localhost:5173
+  NODE_ENV=development
+  ```
+- `frontend/.env`:
+  ```env
+  VITE_API_URL=http://localhost:3000/api
+  ```
+
+### 6. Database Setup
+The repository operates with an embedded local store (`backend/src/data/db.json`) adhering to the Prisma model definitions. To seed or reset sample products at any time:
+```powershell
+npm run db:seed
+```
+
+### 7. How to Start the Application
+Run both the frontend and backend servers concurrently:
+```powershell
+npm run dev
+```
+- Frontend application: `http://localhost:5173`
+- Backend API server: `http://localhost:3000`
+
+### 8. How to Verify API Health
+Open a browser or API client to:
+```http
+GET http://localhost:3000/api/health
+```
+Expected response:
+```json
+{"status":"ok"}
+```
+
+### 9. Four Required API Search Tests
+1. **Name Search:**
+   `http://localhost:3000/api/products?search=keyboard`  
+   *Expected:* Returns active products whose name contains "keyboard" (`Compact Mechanical Keyboard`).
+2. **Description Search:**
+   `http://localhost:3000/api/products?search=privacy`  
+   *Expected:* Returns active products whose description contains "privacy" (`1080p Webcam` with "privacy cover").
+3. **No Matches:**
+   `http://localhost:3000/api/products?search=notfoundword`  
+   *Expected:* Returns HTTP 200 with an empty products array (`{"products":[]}`).
+4. **Full Catalog Unfiltered:**
+   `http://localhost:3000/api/products`  
+   *Expected:* Returns all 6 active products in ascending ID order.
+
+### 10. How Server-Side Search Works
+The Express route `GET /api/products` retrieves the query parameter `search`, trims leading and trailing whitespace, and constructs a Prisma `where` clause:
+```javascript
+const where = {
+  active: true,
+  ...(search
+    ? {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } }
+        ]
+      }
+    : {})
+};
+```
+The `active: true` constraint is placed at the root level outside the `OR` block, guaranteeing that inactive products are never returned.
+
+### 11. React State, Lifecycle, and Stale Response Protection
+- **Live Search & Debounce:** As the user types, a 250ms cleanup-safe timer triggers requests without flooding the network.
+- **Cancellation & Stale Prevention:** Each request creates an `AbortController`. When the query changes or the component unmounts, the previous request is aborted, and a sequential `requestId` ref ensures older out-of-order responses cannot overwrite newer state.
+- **Loading State:** An informative `Loading products…` message is displayed while requests are in flight.
+- **Empty-Result State:** If no products match, `No products found. Try another search term or category.` is shown without crashing.
+- **Error Handling & Recovery:** If the backend is unreachable, an error message and a `Retry` button appear. Restarting the backend and clicking `Retry` automatically recovers the catalog.
+
+### 12. Category Filtering and Sorting Interaction
+- **Stable Categories:** Category choices (`All`, `Accessories`, `Study`, `Video`, `Audio`) are extracted from the complete catalog and retained, ensuring dropdown options do not disappear when search results shrink.
+- **Category Filtering:** Filter selection operates on the matching server results.
+- **Price Sorting:** Sorting operates after category filtering, comparing prices numerically (`Number(a.price) - Number(b.price)`) with deterministic tie-breaking by product ID. The source array is never mutated.
+
+### 13. How to Run Automated Checks
+Run the full automated check pipeline from the project root:
+```powershell
+npm run check
+```
+This executes:
+1. `npm run lint --workspace frontend` (ESLint frontend)
+2. `npm run lint --workspace backend` (ESLint backend)
+3. `npm run test --workspace frontend` (Vitest unit tests)
+4. `npm run test --workspace backend` (Node.js test runner)
+5. `npm run build --workspace frontend` (Vite production build)
+
+### 14. Project Environment & Standalone Notes
+- The project runs in standalone mode using Node.js without requiring external PostgreSQL or MySQL background services installed.
+- Pre-configured environment variables and ports (3000 for backend, 5173 for frontend) are preserved.
+

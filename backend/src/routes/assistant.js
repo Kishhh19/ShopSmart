@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { prisma } from '../lib/prisma.js';
-import { buildAssistantResponse } from '../services/assistant.js';
+import { buildGroundedAssistantResponse } from '../services/assistant.js';
 import { assistantQuestionSchema } from '../validators/schemas.js';
 const router = Router();
 
@@ -11,8 +11,8 @@ router.post('/questions', assistantLimiter, async (request, response, next) => {
   try {
     const parsed = assistantQuestionSchema.safeParse(request.body);
     if (!parsed.success) return response.status(422).json({ error: { code: 'INVALID_QUESTION', message: 'Question must contain between 3 and 300 characters.' } });
-    const products = await prisma.product.findMany({ where: { active: true }, orderBy: { price: 'asc' } });
-    response.json(buildAssistantResponse(products, parsed.data.question));
+    const products = await prisma.product.findMany({ where: { active: true, stock: { gt: 0 } }, orderBy: { price: 'asc' } });
+    response.json(await buildGroundedAssistantResponse(products, parsed.data.question));
   } catch (error) { next(error); }
 });
 

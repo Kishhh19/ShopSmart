@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma.js';
 import { orderSchema } from '../validators/schemas.js';
 const router = Router();
@@ -18,7 +17,7 @@ router.post('/', async (request, response, next) => {
     const unavailable = normalizedItems.find((item) => item.quantity > item.product.stock);
     if (unavailable) return response.status(409).json({ error: { code: 'INSUFFICIENT_STOCK', message: `Only ${unavailable.product.stock} unit(s) of ${unavailable.product.name} are available.` } });
 
-    const total = normalizedItems.reduce((sum, item) => sum.plus(new Prisma.Decimal(item.product.price).times(item.quantity)), new Prisma.Decimal(0));
+    const total = normalizedItems.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0);
     const order = await prisma.$transaction(async (transaction) => {
       for (const item of normalizedItems) {
         const updated = await transaction.product.updateMany({

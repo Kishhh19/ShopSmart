@@ -18,10 +18,18 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  getProducts: (query = '') => request(`/products${query ? `?search=${encodeURIComponent(query)}` : ''}`),
-  getProduct: (id) => request(`/products/${id}`),
-  createOrder: (order) => request('/orders', { method: 'POST', body: JSON.stringify(order) }),
-  askAssistant: (question) => request('/assistant/questions', {
-    method: 'POST', body: JSON.stringify({ question })
+  getProducts: (query = '', options = {}) => {
+    const trimmed = typeof query === 'string' ? query.trim() : '';
+    const params = new URLSearchParams();
+    if (trimmed) {
+      params.set('search', trimmed);
+    }
+    const queryString = params.toString();
+    return request(`/products${queryString ? `?${queryString}` : ''}`, options);
+  },
+  getProduct: (id, options = {}) => request(`/products/${id}`, options),
+  createOrder: (order, options = {}) => request('/orders', { method: 'POST', body: JSON.stringify(order), ...options }),
+  askAssistant: (question, options = {}) => request('/assistant/questions', {
+    method: 'POST', body: JSON.stringify({ question }), ...options
   })
 };
