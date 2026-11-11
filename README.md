@@ -170,13 +170,17 @@ The command must finish without an error.
 
 ### 6. Create the database tables
 
-Make sure the PostgreSQL service is running. Then run:
+Make sure the PostgreSQL service is running. Then apply the committed migration:
 
 ```powershell
-npm run db:migrate
+npm run db:deploy
 ```
 
-Prisma will connect using `backend/.env` and create the Product, Order and OrderItem tables. The migration command should report that the database is in sync.
+Prisma connects using `DATABASE_URL` in `backend/.env` and creates the Product, Order and OrderItem tables. `db:deploy` runs `prisma migrate deploy`: it only applies committed migrations and never resets data, so it is safe to run again.
+
+Use `npm run db:migrate` (`prisma migrate dev`) only when you change `schema.prisma` and need a new migration. It creates a temporary shadow database, so the database user needs permission to create databases (`ALTER USER shopsmart_user CREATEDB;` in SQL Shell as `postgres`).
+
+If `db:deploy` reports that the schema is not empty or a table already exists, an older ShopSmart database is in the way. If it holds only sample data, recreate it in SQL Shell (`DROP DATABASE shopsmart;` then the `CREATE DATABASE` statement from step D) and run `npm run db:deploy` again. Ask the instructor first if it holds work you need.
 
 ### 7. Insert sample products
 
@@ -192,7 +196,7 @@ The terminal should display:
 Seeded 6 ShopSmart products.
 ```
 
-Running this command again deletes existing classroom orders and restores the six sample products. Do not reseed a database containing work you need to keep.
+The seed replaces all products and deletes all orders, so it now refuses to run when any order exists and prints `Seed stopped: the database already contains N order(s)`. To deliberately wipe a classroom database, run `$env:SEED_RESET="true"; npm run db:seed; Remove-Item Env:SEED_RESET`. Never seed a staging or production database.
 
 ### 8. Run the automated checks
 
@@ -304,7 +308,7 @@ Stop the previous ShopSmart process with `Ctrl+C`. Do not change ports unless th
 
 ### Products do not appear
 
-Verify http://localhost:3000/api/health, then run `npm run db:seed` and restart `npm run dev`.
+Verify http://localhost:3000/api/health and run `npm run db:status`. If no migration is applied, run `npm run db:deploy`; if the Product table is empty, run `npm run db:seed`. Then restart `npm run dev`.
 
 ### The browser reports a CORS error
 
@@ -318,8 +322,9 @@ Confirm that the front end uses http://localhost:5173 and that `FRONTEND_URL=htt
 | `npm run dev` | Run front end and API |
 | `npm run check` | Lint, test and build |
 | `npm run db:generate` | Generate Prisma Client |
-| `npm run db:migrate` | Create or update database tables |
-| `npm run db:seed` | Reset and insert sample data |
+| `npm run db:deploy` | Apply committed migrations without resetting data |
+| `npm run db:migrate` | Create a new migration after a schema change (development only) |
+| `npm run db:seed` | Insert sample data into an empty database (refuses if orders exist) |
 | `npm run db:studio` | Open the Prisma database viewer |
 
 Read `docs/TEACHING_ROADMAP.md` for the weekly improvement plan.
@@ -334,7 +339,7 @@ Laboratory 3 enhances ShopSmart by transitioning product catalog searching from 
 ### 2. Technologies Used
 - **Frontend:** React 19, Vite 7, React Router 7, Vitest
 - **Backend API:** Node.js 22 LTS, Express 5, Morgan, Helmet, CORS, express-rate-limit
-- **ORM & Data Layer:** Prisma ORM, MySQL/PostgreSQL schema configuration, standalone file-backed JSON store adapter (`backend/src/data/db.json`)
+- **ORM & Data Layer:** Prisma ORM with PostgreSQL (the Lab 3 file-backed JSON store was removed in the final release candidate)
 - **Validation & Quality:** Zod 4, ESLint 9, Node.js native test runner
 
 ### 3. Required Software
@@ -349,23 +354,22 @@ npm install
 ```
 
 ### 5. Environment Configuration
-Verify that `.env` files exist in both `backend` and `frontend` without exposing credentials:
-- `backend/.env`:
+Copy `backend/.env.example` to `backend/.env` and `frontend/.env.example` to `frontend/.env`. Never commit either file.
+- `backend/.env` (server secrets):
   ```env
+  DATABASE_URL="postgresql://shopsmart_user:shopsmart_dev@localhost:5432/shopsmart?schema=public"
   PORT=3000
   FRONTEND_URL=http://localhost:5173
   NODE_ENV=development
+  GEMINI_API_KEY=
   ```
-- `frontend/.env`:
+- `frontend/.env` (public, compiled into the browser bundle):
   ```env
   VITE_API_URL=http://localhost:3000/api
   ```
 
 ### 6. Database Setup
-The repository operates with an embedded local store (`backend/src/data/db.json`) adhering to the Prisma model definitions. To seed or reset sample products at any time:
-```powershell
-npm run db:seed
-```
+ShopSmart stores products and orders in PostgreSQL through Prisma. Follow steps 5 to 7 of the setup above: `npm run db:generate`, `npm run db:deploy`, then `npm run db:seed` on an empty database.
 
 ### 7. How to Start the Application
 Run both the frontend and backend servers concurrently:
@@ -444,3 +448,13 @@ This executes:
 - The project runs in standalone mode using Node.js without requiring external PostgreSQL or MySQL background services installed.
 - Pre-configured environment variables and ports (3000 for backend, 5173 for frontend) are preserved.
 
+
+---
+
+## Final Challenge: Release Candidate
+
+- Test record: `docs/FINAL_TEST_RECORD.md` (evidence screenshots in `docs/evidence/`)
+- Deployment plan and diagram: `docs/DEPLOYMENT_PLAN.md`
+- Release note: `RELEASE_NOTE.md`
+
+This is a local release candidate. No staging site has been deployed.

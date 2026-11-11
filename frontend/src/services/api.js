@@ -1,10 +1,22 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
+export const NETWORK_ERROR_MESSAGE = 'Could not reach the ShopSmart API. Check that the backend is running, then try again.';
+
 async function request(path, options = {}) {
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: { 'Content-Type': 'application/json', ...options.headers }
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: { 'Content-Type': 'application/json', ...options.headers }
+    });
+  } catch (caught) {
+    // Keep cancellations distinguishable so pages can ignore them.
+    if (caught?.name === 'AbortError') throw caught;
+    // fetch rejects with a bare "Failed to fetch" TypeError when the API is down or blocked by CORS.
+    const error = new Error(NETWORK_ERROR_MESSAGE);
+    error.code = 'NETWORK_ERROR';
+    throw error;
+  }
 
   const data = await response.json().catch(() => null);
   if (!response.ok) {

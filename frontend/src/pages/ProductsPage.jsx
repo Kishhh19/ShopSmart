@@ -122,7 +122,7 @@ export default function ProductsPage() {
       {loading && <StatusMessage>Loading products…</StatusMessage>}
       {error && (
         <StatusMessage type="error">
-          <span style={{ marginRight: '0.75rem' }}>{error} Make sure the backend is running.</span>
+          <span style={{ marginRight: '0.75rem' }}>{error}</span>
           <button
             type="button"
             className="button secondary"

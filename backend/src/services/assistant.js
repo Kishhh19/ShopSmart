@@ -1,11 +1,31 @@
+// A number is only a budget when it is marked as money (₱, PHP, pesos) or follows a
+// budget phrase. Plain numbers such as "1080p" or "16 inch" describe the product.
+const BUDGET_PATTERN = /(?:₱\s*|\bphp\s*|\b(?:under|below|less than|cheaper than|within|up to|max(?:imum)?|budget(?: of| is)?|at most|no more than|not more than)\s+(?:₱\s*|php\s*)?)(\d+(?:\.\d{1,2})?)|\b(\d+(?:\.\d{1,2})?)\s*(?:pesos?|php)\b/i;
+
+// Common question words carry no product meaning. Without this list, words such as
+// "for" and "with" matched product descriptions and produced unrelated recommendations.
+const STOP_WORDS = new Set([
+  'the', 'and', 'for', 'with', 'you', 'your', 'have', 'has', 'any', 'anything', 'something', 'what', 'which',
+  'who', 'does', 'can', 'are', 'there', 'that', 'this', 'these', 'those', 'sell', 'need', 'want', 'looking',
+  'recommend', 'show', 'find', 'some', 'under', 'below', 'less', 'than', 'cheaper', 'within', 'budget', 'max',
+  'maximum', 'most', 'more', 'not', 'pesos', 'peso', 'php', 'price', 'good', 'best', 'product', 'products',
+  'item', 'items', 'please', 'about', 'from', 'get', 'buy', 'like', 'would', 'should', 'available', 'stock', 'one'
+]);
+
 export function parseBudget(question) {
-  const normalized = question.replaceAll(',', '');
-  const match = normalized.match(/(?:₱|php\s*)?(\d{2,6})(?:\.\d{1,2})?/i);
-  return match ? Number(match[1]) : null;
+  const match = question.replaceAll(',', '').match(BUDGET_PATTERN);
+  if (!match) return null;
+  return Number(match[1] ?? match[2]);
+}
+
+export function extractTerms(question) {
+  return question.toLowerCase().split(/[^a-z0-9]+/)
+    .filter((term) => term.length > 2 && !STOP_WORDS.has(term) && !/^\d+$/.test(term))
+    .map((term) => (term.length > 4 && term.endsWith('s') ? term.slice(0, -1) : term));
 }
 
 export function rankProducts(products, question) {
-  const terms = question.toLowerCase().split(/[^a-z0-9]+/).filter((term) => term.length > 2);
+  const terms = extractTerms(question);
   const budget = parseBudget(question);
   return products
     .filter((product) => product.stock > 0 && (budget === null || Number(product.price) <= budget))
