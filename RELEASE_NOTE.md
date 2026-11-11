@@ -1,7 +1,9 @@
 # ShopSmart Release Note: Final Challenge Release Candidate
 
-**Version and date:** Release candidate 1.1.0-rc1, 11 November 2026. Based on commit `868bf02` plus the final-challenge changes. _(Add the commit hash after committing: `git log -1 --format=%h`.)_
-**Deployment status:** **Local release candidate only.** No private staging or live site was deployed. A plan is in `docs/DEPLOYMENT_PLAN.md`.
+**Team:** Team JAM
+
+**Version and date:** Release candidate 1.1.0-rc1, 11 November 2026. Release commit `2a40de5` (starting point was `868bf02`).
+**Deployment status:** **Local release candidate only.** No private staging or live site was deployed. Local smoke test passed on a Team JAM laptop on 11 November 2026 (PostgreSQL 16.15). A plan is in `docs/DEPLOYMENT_PLAN.md`.
 
 ## Working features (verified, see `docs/FINAL_TEST_RECORD.md`)
 
@@ -21,7 +23,8 @@
 - **Cart:** stored in browser memory only, so a refresh empties it. It also keeps the stock figure from when an item was added; the server refuses the order if stock has since fallen.
 - **Health check:** `/api/health` does not test the database connection.
 - **Hosting:** not deployed. Before staging, add `app.set('trust proxy', 1)` for the rate limiter and an SPA rewrite rule (see the deployment plan).
-- **Verification environment:** automated and browser tests were run against PostgreSQL 16 in a cloud workspace using Prisma's engine-free client mode, because the native engine download was blocked there. The team should repeat the README smoke test on a laptop with the standard client and record it in the test record.
+- **Verification environment:** verified twice against PostgreSQL 16: first in a cloud workspace (Prisma engine-free client mode), then on a Team JAM laptop with the standard Prisma client (see the last table in the test record).
+- **Dependencies:** `npm audit` reports 17 known vulnerabilities in third-party packages (4 moderate, 8 high, 5 critical); not addressed in this release.
 
 ## Local startup
 

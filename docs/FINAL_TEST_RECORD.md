@@ -5,7 +5,8 @@
 **Release candidate:** `868bf02` plus the changes listed under "Defects" below
 **Environment:** Node.js 22, PostgreSQL 16, Chromium (Playwright), frontend at `http://localhost:5173`, API at `http://localhost:3000/api`
 **Data used:** fictional customers only (Juan Dela Prueba, Maria Halimbawa, `@example.com` addresses)
-**Recorder:** _(team member name)_
+**Team:** Team JAM
+**Recorder:** Team JAM
 
 Evidence screenshots are in `docs/evidence/`.
 
@@ -163,6 +164,6 @@ No test was deleted or weakened. One new test was adjusted while it was being wr
 
 | Date | Machine | `npm run check` | Health | Products | Cart | Checkout | Assistant | Tester |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-11-11 13:10 | Team laptop: Windows, Node 25.8.1, PostgreSQL 16.15, standard Prisma client 6.19.3 | **Pass**: `db:deploy` applied 1 migration, seed inserted 6 products, lint 0 errors, frontend 16/16, backend 23/23, build OK | **Pass**: `{"status":"ok"}` | **Pass**: 6 cards; `keyboard` search returns only Compact Mechanical Keyboard | **Pass**: 2 × Wireless Mouse = Items 2, ₱1,300 | **Pass**: fictional "Pedro Sample", `pedro.sample@example.com` → "order number is #1", Total ₱1,300.00 | **Pass**: "Do you have a 1080p webcam?" → 1080p Webcam ₱1,450 with source | _(name)_, run in Chrome |
+| 2026-11-11 13:10 | Team laptop: Windows, Node 25.8.1, PostgreSQL 16.15, standard Prisma client 6.19.3 | **Pass**: `db:deploy` applied 1 migration, seed inserted 6 products, lint 0 errors, frontend 16/16, backend 23/23, build OK | **Pass**: `{"status":"ok"}` | **Pass**: 6 cards; `keyboard` search returns only Compact Mechanical Keyboard | **Pass**: 2 × Wireless Mouse = Items 2, ₱1,300 | **Pass**: fictional "Pedro Sample", `pedro.sample@example.com` → "order number is #1", Total ₱1,300.00 | **Pass**: "Do you have a 1080p webcam?" → 1080p Webcam ₱1,450 with source | Team JAM, run in Chrome |
 
 Laptop finding: the first `db:deploy` attempt failed with `P1001: Can't reach database server at localhost:5432` because PostgreSQL was not installed. After installing PostgreSQL 16.15 and creating `shopsmart_user` and the `shopsmart` database (README step D), every step passed.
