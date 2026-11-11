@@ -40,9 +40,8 @@ Follow `README.md`, sections "Set up the ShopSmart project" steps 1 to 11. What 
 
 | Member | Test they ran | Contribution | Issue they can explain |
 | --- | --- | --- | --- |
-| _(name)_ | T5 Assistant: "Do you have a 1080p webcam?" | Fixed assistant budget parsing and stop words (DEF-02/03/04) with regression tests | Why "1080" became a ₱1,080 budget and hid the webcam |
-| _(name)_ | T3/T4 Checkout and stock refusal | Restored PostgreSQL through Prisma and removed the git-tracked JSON store (DEF-01, DEF-07) | Why committing `db.json` would have published customer data |
-| _(name)_ | T6 Failure: API down and provider failure | Network-error message in `api.js` (DEF-05); replaced the duplicate fallback screenshot (DEF-08) | How the frontend tells a network failure from an API error |
-| _(name)_ | T7 Data survival / reseed | Seed safety guard (DEF-06), deployment plan and diagram | Why staging uses `prisma migrate deploy` and never `migrate dev` or the seed |
+| Josh Manalang | T5 Assistant: "Do you have a 1080p webcam?" and "keyboard for gaming" | Fixed assistant budget parsing and stop words (DEF-02/03/04) with regression tests | Why "1080" became a ₱1,080 budget and hid the webcam |
+| Andrik Brenth Canlas | T3/T4 Checkout and stock refusal; T7 blocked reseed | Restored PostgreSQL through Prisma, removed the git-tracked JSON store, stable seed ids and the seed safety guard (DEF-01, DEF-06, DEF-07) | Why committing `db.json` would have published customer data |
+| Mark Laurence Santos | T6 Failure: API down and AI provider failure; laptop smoke test | Network-error message in `api.js` (DEF-05), replaced the duplicate fallback screenshot (DEF-08), deployment plan and diagram | Why staging uses `prisma migrate deploy` and never `migrate dev` or the seed |
 
-_Reassign rows to match who actually did each part. Each member should be able to explain their row._
+Each member can explain the test, contribution and issue in their row.
