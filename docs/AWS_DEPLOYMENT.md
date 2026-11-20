@@ -4,7 +4,7 @@
 **Status:** **Hosted online** (fictional data and simulated checkout only)
 **Site URL:** https://47-130-123-197.sslip.io
 **Health:** https://47-130-123-197.sslip.io/api/health · **Readiness (checks the database):** https://47-130-123-197.sslip.io/api/health/ready
-**Code version:** GitHub `Kishhh19/ShopSmart` `main` @ `86f9b5c` + the uncommitted 1.2.0 changes listed in `RELEASE_NOTE.md` (deployed bundle `shopsmart-release.tgz`). Commit and push them, then record the new commit id here.
+**Code version:** GitHub `Kishhh19/ShopSmart` commit `9a17af5` (release 1.2.0). The deployed bundle `shopsmart-release.tgz` was built from the same source; only documentation changed after it.
 
 ## 1. Account plan and credits (checked before creating anything)
 

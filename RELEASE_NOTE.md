@@ -1,6 +1,6 @@
 # ShopSmart Release Note: 1.2.0 AWS Hosted Release
 
-**Team:** Team JAM · **Date:** 20 November 2026 · **Base commit:** `86f9b5c` + the changes below (commit and record the new id).
+**Team:** Team JAM · **Date:** 20 November 2026 · **Release commit:** `9a17af5` (previous release `86f9b5c`).
 **Deployment status:** **Hosted** on AWS (ap-southeast-1) at https://47-130-123-197.sslip.io — single EC2 host, fictional data and simulated checkout only. Full record, diagram, resource register and hosted test results: `docs/AWS_DEPLOYMENT.md`. Evidence: `docs/evidence/aws/`.
 
 ## What changed in 1.2.0
