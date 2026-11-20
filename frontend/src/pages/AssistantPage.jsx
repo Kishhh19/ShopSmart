@@ -33,6 +33,7 @@ export default function AssistantPage() {
         {loading && <p role="status">Checking the current catalog…</p>}
         {!result && !error && !loading && <p>Your answer will appear here.</p>}
         {result && <>
+          <p className="provider-badge">{result.provider === 'gemini' ? 'Live AI draft, verified against the catalog' : result.provider === 'rule-based-fallback' ? 'AI provider unavailable: verified rule-based fallback' : 'Rule-based assistant (no live AI provider)'}</p>
           <p>{result.answer}</p>
           <div className="recommendations">
             {result.recommendedProducts.map((product) => (

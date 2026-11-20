@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { orderSchema } from '../validators/schemas.js';
+import { requireUser } from '../lib/auth.js';
 const router = Router();
 
-router.post('/', async (request, response, next) => {
+router.post('/', requireUser, async (request, response, next) => {
   try {
     const parsed = orderSchema.safeParse(request.body);
     if (!parsed.success) return response.status(422).json({ error: { code: 'INVALID_ORDER', message: 'Check the customer and cart information.', details: parsed.error.flatten() } });
@@ -29,14 +30,44 @@ router.post('/', async (request, response, next) => {
       return transaction.order.create({
         data: {
           customerName: parsed.data.customerName, email: parsed.data.email, address: parsed.data.address, total,
+          userId: request.user.id,
           items: { create: normalizedItems.map((item) => ({ productId: item.productId, quantity: item.quantity, unitPrice: item.product.price })) }
         },
         include: { items: true }
       });
     });
-    response.status(201).json({ ...order, total: Number(order.total), items: order.items.map((item) => ({ ...item, unitPrice: Number(item.unitPrice) })) });
+    response.status(201).json(serializeOrder(order));
   } catch (error) { next(error); }
 });
 
-// WEEK 4 IMPROVEMENT: Associate orders with authenticated users and add a protected GET route.
+// Signed-in customers can list only their own orders.
+router.get('/', requireUser, async (request, response, next) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: { userId: request.user.id }, orderBy: { createdAt: 'desc' },
+      include: { items: { include: { product: { select: { name: true } } } } }
+    });
+    response.json({ orders: orders.map(serializeOrder) });
+  } catch (error) { next(error); }
+});
+
+// Ownership is enforced here on the server, not by hiding links in React.
+router.get('/:id', requireUser, async (request, response, next) => {
+  try {
+    const id = Number(request.params.id);
+    if (!Number.isInteger(id) || id < 1) return response.status(400).json({ error: { code: 'INVALID_ORDER_ID', message: 'Order ID must be a positive integer.' } });
+    const order = await prisma.order.findUnique({ where: { id }, include: { items: { include: { product: { select: { name: true } } } } } });
+    if (!order) return response.status(404).json({ error: { code: 'ORDER_NOT_FOUND', message: 'Order could not be found.' } });
+    if (order.userId !== request.user.id) return response.status(403).json({ error: { code: 'ORDER_FORBIDDEN', message: 'You can only view your own orders.' } });
+    response.json(serializeOrder(order));
+  } catch (error) { next(error); }
+});
+
+function serializeOrder(order) {
+  return {
+    id: order.id, status: order.status, customerName: order.customerName, email: order.email, address: order.address,
+    total: Number(order.total), createdAt: order.createdAt, userId: order.userId,
+    items: order.items.map((item) => ({ id: item.id, productId: item.productId, productName: item.product?.name, quantity: item.quantity, unitPrice: Number(item.unitPrice) }))
+  };
+}
 export default router;

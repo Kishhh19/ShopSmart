@@ -1,6 +1,6 @@
 # ShopSmart Deployment Plan
 
-**Status:** plan only. No staging site has been deployed. This release is a **local release candidate**.
+**Status (20 Nov 2026):** superseded by the AWS deployment in `docs/AWS_DEPLOYMENT.md` (single EC2 host, https://47-130-123-197.sslip.io). The Render-based proposal below is kept as the original plan.
 The hosting platform below is a proposal and must be approved by the instructor. Platform commands must be checked against that platform's current documentation before use.
 
 ## Architecture

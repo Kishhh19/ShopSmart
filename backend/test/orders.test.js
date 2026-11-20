@@ -1,21 +1,31 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../src/app.js';
+import { prisma } from '../src/lib/prisma.js';
 
 // These cases only exercise refusals, so they never create orders or change stock
 // in the developer database. A successful order is covered by the manual smoke test.
+// Orders now require sign-in, so the refusals run as a fictional signed-in customer.
 let server;
 let baseUrl;
+let cookie;
+const account = { name: 'Order Tester', email: `order.tester.${Date.now()}@example.com`, password: 'fictional-pass-3' };
 
 test.before(async () => {
   await new Promise((resolve) => {
     server = createApp().listen(0, () => { baseUrl = `http://localhost:${server.address().port}`; resolve(); });
   });
+  const res = await fetch(`${baseUrl}/api/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(account) });
+  cookie = res.headers.get('set-cookie').split(';')[0];
 });
-test.after(async () => { if (server) await new Promise((resolve) => server.close(resolve)); });
+test.after(async () => {
+  await prisma.user.deleteMany({ where: { email: account.email } });
+  await prisma.$disconnect();
+  if (server) await new Promise((resolve) => server.close(resolve));
+});
 
 const customer = { customerName: 'Test Customer', email: 'test.customer@example.com', address: '1 Sample Street, Test City' };
-const post = (body) => fetch(`${baseUrl}/api/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+const post = (body) => fetch(`${baseUrl}/api/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: cookie }, body: JSON.stringify(body) });
 
 test('POST /api/orders refuses invalid customer details with 422', async () => {
   const res = await post({ customerName: 'A', email: 'not-an-email', address: 'short', items: [] });

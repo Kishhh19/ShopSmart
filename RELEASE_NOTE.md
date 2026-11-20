@@ -1,3 +1,34 @@
+# ShopSmart Release Note: 1.2.0 AWS Hosted Release
+
+**Team:** Team JAM · **Date:** 20 November 2026 · **Base commit:** `86f9b5c` + the changes below (commit and record the new id).
+**Deployment status:** **Hosted** on AWS (ap-southeast-1) at https://47-130-123-197.sslip.io — single EC2 host, fictional data and simulated checkout only. Full record, diagram, resource register and hosted test results: `docs/AWS_DEPLOYMENT.md`. Evidence: `docs/evidence/aws/`.
+
+## What changed in 1.2.0
+
+- **Customer sign-in (Week 4 improvement 1):** register, sign in, sign out with scrypt-hashed passwords and a server-side session in an `HttpOnly`, `Secure`, `SameSite=Lax` cookie (`backend/src/lib/auth.js`, `routes/auth.js`). Login is rate-limited and returns one generic message for wrong email or password.
+- **Order ownership enforced by the API (Week 4 improvement 2):** placing an order requires sign-in and records `Order.userId`; new `GET /api/orders` (own orders only) and `GET /api/orders/:id` (401 guest, 403 another customer, 200 owner).
+- **Committed migration** `20261120090000_add_users_sessions_order_owner` (User, Session, nullable `Order.userId`, so older orders are preserved). Applied with `prisma migrate deploy`.
+- Frontend: Sign-in/Create account page, My account (order list + order details), checkout gate with prefilled name/email, all requests send the session cookie, classroom-data notice in the footer.
+- Assistant responses carry `provider` and the UI labels them ("Rule-based assistant (no live AI provider)" / AI fallback / live AI).
+- Operations: `/api/health/ready` checks the database; `TRUST_PROXY` for the rate limiter behind Caddy; `HOST` so Express binds to 127.0.0.1; `deploy/` scripts (bootstrap, Caddy, systemd units).
+- Tests: new `backend/test/auth.test.js` (guest refused, duplicate email, wrong password, owner vs other customer, logout); `orders.test.js` now signs in first. Host run: backend 28/28, frontend 16/16, lint clean.
+
+## Retests (two improvements)
+
+| Improvement | Retest on the hosted version | Result |
+| --- | --- | --- |
+| Sign-in with server session | Register 201; wrong password 401; guest `/api/auth/me` 401; cookie HttpOnly + Secure; logout ends session (automated) | Pass |
+| Server-enforced order ownership | Guest `GET /api/orders/1` 401; owner 200; second customer 403 `ORDER_FORBIDDEN`; owner order still readable after API restart and full reboot | Pass |
+
+## Known limitations (1.2.0)
+
+- One EC2 host: single point of failure; no automated database backups (manual `pg_dump` documented).
+- `sslip.io` hostname instead of a real domain; changes if the Elastic IP is released.
+- Live AI provider still not configured (no key); assistant is the labelled rule-based provider.
+- No password reset or admin role. Cart still lives in browser memory.
+
+---
+
 # ShopSmart Release Note: Final Challenge Release Candidate
 
 **Team:** Team JAM

@@ -1,0 +1,18 @@
+[Unit]
+Description=Caddy HTTPS web server for ShopSmart
+After=network-online.target shopsmart-hostconfig.service
+Wants=network-online.target
+
+[Service]
+User=caddy
+Group=caddy
+ExecStart=/usr/local/bin/caddy run --environ --config /etc/caddy/Caddyfile
+ExecReload=/usr/local/bin/caddy reload --config /etc/caddy/Caddyfile --force
+Environment=XDG_DATA_HOME=/var/lib/caddy XDG_CONFIG_HOME=/var/lib/caddy
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+Restart=on-failure
+TimeoutStopSec=5s
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target

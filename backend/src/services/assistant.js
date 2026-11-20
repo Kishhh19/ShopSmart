@@ -99,9 +99,14 @@ export async function askProvider(question, selectedProducts, fetchImpl = fetch)
 }
 
 export async function buildGroundedAssistantResponse(products, question) {
+  // `provider` tells the interface and the report whether a live AI call shaped the answer.
+  // With no GEMINI_API_KEY the assistant is the verified rule-based (simulated) provider.
+  const mode = process.env.GEMINI_API_KEY ? 'gemini' : 'rule-based';
   const selected = rankProducts(products.filter((product) => product.active !== false), question).slice(0, 3);
-  const fallback = buildAssistantResponse(selected, question);
+  const fallback = { ...buildAssistantResponse(selected, question), provider: mode === 'gemini' ? 'rule-based-fallback' : 'rule-based' };
   if (selected.length === 0) return fallback;
   const draft = await askProvider(question, selected);
-  return validateProviderDraft(draft, selected, question) || fallback;
+  const verified = validateProviderDraft(draft, selected, question);
+  if (!verified) return fallback;
+  return { ...verified, provider: verified.answer === draft?.answer?.trim() ? 'gemini' : 'rule-based-fallback' };
 }

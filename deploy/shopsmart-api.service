@@ -1,0 +1,19 @@
+[Unit]
+Description=ShopSmart Express API
+After=network-online.target postgresql.service shopsmart-hostconfig.service
+Requires=postgresql.service
+
+[Service]
+User=shopsmart
+WorkingDirectory=/opt/shopsmart/current/backend
+EnvironmentFile=/etc/shopsmart/api.env
+ExecStart=/opt/node/bin/node src/server.js
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

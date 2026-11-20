@@ -7,6 +7,8 @@ async function request(path, options = {}) {
   try {
     response = await fetch(`${API_URL}${path}`, {
       ...options,
+      // Sends the HTTP-only session cookie; the browser never reads the token itself.
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json', ...options.headers }
     });
   } catch (caught) {
@@ -18,6 +20,7 @@ async function request(path, options = {}) {
     throw error;
   }
 
+  if (response.status === 204) return null;
   const data = await response.json().catch(() => null);
   if (!response.ok) {
     const message = data?.error?.message || `Request failed with status ${response.status}.`;
@@ -41,6 +44,12 @@ export const api = {
   },
   getProduct: (id, options = {}) => request(`/products/${id}`, options),
   createOrder: (order, options = {}) => request('/orders', { method: 'POST', body: JSON.stringify(order), ...options }),
+  register: (account) => request('/auth/register', { method: 'POST', body: JSON.stringify(account) }),
+  login: (credentials) => request('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
+  logout: () => request('/auth/logout', { method: 'POST' }),
+  me: (options = {}) => request('/auth/me', options),
+  getMyOrders: (options = {}) => request('/orders', options),
+  getOrder: (id, options = {}) => request(`/orders/${id}`, options),
   askAssistant: (question, options = {}) => request('/assistant/questions', {
     method: 'POST', body: JSON.stringify({ question }), ...options
   })

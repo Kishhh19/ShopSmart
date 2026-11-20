@@ -1,0 +1,13 @@
+[Unit]
+Description=ShopSmart public hostname and Caddyfile
+Wants=network-online.target
+After=network-online.target
+Before=caddy.service shopsmart-api.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/shopsmart-configure-host
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
