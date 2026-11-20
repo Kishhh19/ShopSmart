@@ -33,6 +33,10 @@ Redacted evidence: `docs/evidence/aws/00a_billing_credits_redacted.jpg` (credits
 
 ## 3. Deployment diagram
 
+![AWS deployment diagram](aws_deployment_diagram.png)
+
+(`docs/aws_deployment_diagram.png`; the older `deployment_diagram.png` is the original Render proposal.)
+
 ```mermaid
 flowchart LR
   B["Customer browser<br/>(fictional test customers)"]
@@ -142,4 +146,5 @@ No credentials, keys or passwords are recorded here.
 | 08 | Tests on the host: backend 28/28, frontend 16/16 |
 | 09 | Services and listening ports (API and DB on 127.0.0.1 only) |
 | 10 / 11 | Sign-in page; guest opening `/account` is redirected to sign-in |
-| 12 / 13 | *(Team to add)* Signed-in "My account" page and the order details page after a checkout done in the browser |
+| 12 | Team member signed in through the website: My account page with name, email and Sign out |
+| 13 / 14 | Signed-in customer: cart with total, product catalog with "added to cart" notice |
